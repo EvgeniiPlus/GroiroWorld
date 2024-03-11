@@ -5,13 +5,13 @@ from .models import *
 class ServicesAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'structure', 'price')
     list_display_links = ('id', 'name')
-    search_fields = ('name', )
+    search_fields = ('name',)
     list_editable = ('price',)
     list_filter = ('structure',)
 
 
 class StructuresAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'description', 'employee')
+    list_display = ('id', 'name', 'employee', 'plan', 'earned')
     list_display_links = ('id', 'name')
     search_fields = ('name', 'employee')
     list_editable = ('employee',)
@@ -23,12 +23,11 @@ class RolesAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
-
 class UsersAdmin(admin.ModelAdmin):
-    list_display = ('id', 'surname', 'name', 'role')
+    list_display = ('id', 'surname', 'name', 'role', 'email')
     list_display_links = ('id', 'surname', 'name')
     search_fields = ('surname', 'name')
-    list_editable = ('role',)
+    list_editable = ('role', )
     list_filter = ('role',)
 
 
@@ -38,8 +37,10 @@ class ReportsAdmin(admin.ModelAdmin):
     list_editable = ('nds',)
     list_filter = ('date', 'service', 'date_create')
 
+
 class OrdersAdmin(admin.ModelAdmin):
-    list_display = ('id', 'service', 'client_name', 'sum', 'email', 'phone', 'date_of_receiving', 'status', 'date_create', 'date_edit')
+    list_display = (
+    'id', 'service', 'client_name', 'sum', 'email', 'phone', 'date_of_receiving', 'status', 'date_create', 'date_edit')
     list_display_links = ('id', 'service')
     list_editable = ('status',)
     list_filter = ('date_of_receiving', 'service', 'status', 'date_create')

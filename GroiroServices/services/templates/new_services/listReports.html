@@ -22,7 +22,7 @@
                             <tr>
                                 <td class="text-end">Услуга</td>
                                 <td>
-                                    <select class="d-block" style="margin-left: 8px;padding-right: 90px;padding-top: 4px;padding-bottom: 4px;padding-left: 8px;font-size: 14px;border-color: rgb(133,135,150);border-radius: 4px;color: rgb(133,135,150);"  name="service">
+                                    <select class="d-block" style="margin-left: 8px;padding-right: 90px;padding-top: 4px;padding-bottom: 4px;padding-left: 8px;font-size: 14px;border-color: rgb(133,135,150);border-radius: 4px;color: rgb(133,135,150);"  id="service" name="service">
                                         <option value="all">Все услуги</option>
                                         {% for s in services %}
                                             <option value="{{s.pk}}">{{s.name}}</option>
@@ -40,6 +40,7 @@
                                     <input class="btn btn-primary" type="submit" value="Показать">
                                     <a class="btn btn-primary" type="button" style="margin-left: 5px; border-radius: 10px"
                                        href="{% url 'listReports' structure.pk %}">Очистить</a>
+                                    <input type="button" value="Скачать" onclick="setGetParameter()" class="btn btn-primary" style="border-radius: 10px" />
                                 </td>
                                 <td class="text-end"></td>
                                 <td></td>
@@ -96,7 +97,6 @@
                 total_count = document.getElementById('total_count'),
                 total_sum = document.getElementById('total_sum');
                 total_nds = document.getElementById('total_nds');
-
             let trs = document.getElementsByTagName('tbody')[1].getElementsByTagName('tr');
             tc=0;
             ts=0;
@@ -105,11 +105,11 @@
                 if (trs[td].style.display == '') {
                     tc = tc + Number(trs[td].getElementsByTagName('td')[2].innerText);
                     total_count.innerText = tc;
-                    console.log(tc);
+                    // console.log(tc);
 
                     ts = ts + parseFloat(trs[td].getElementsByTagName('td')[3].innerText.split(' ')[0].replace(',', '.'))
                     total_sum.innerText = ts.toFixed(2).replace('.', ',') + ' руб.';
-                    console.log(ts)
+                    // console.log(ts)
                 }
             total_nds.innerText = (parseFloat(total_sum.innerText.split(' ')[0].replace(',', '.'))/6).toFixed(2) + ' руб.';
 
@@ -148,7 +148,8 @@
                 date_finish = new Date(document.getElementById('date_finish').value),
                 table = document.getElementById('reportsTable'),
                 tr = table.getElementsByTagName('tr');
-            console.log('С ' + date_start + ' по ' + date_finish);
+
+            // console.log('С ' + date_start + ' по ' + date_finish);
 
             for (i = 0; i < tr.length; i++) {
                     td = tr[i].getElementsByTagName('td')[0];
@@ -163,14 +164,19 @@
                         } else {
                             tr[i].style.display = 'none';
                         }
-
                     }
-
-
             }
             Sum();
         }
 
+        function setGetParameter(){
+            service = document.getElementById('service').value;
+            date_start = document.getElementById('date_start').value;
+            date_finish = document.getElementById('date_finish').value;
+            structure = "{{structure}}"
+            console.log(service, date_start, date_finish);
+            window.location.href = "{% url 'downloadReport' %}" + "?service=" + service + "&date_start=" + date_start + "&date_finish=" + date_finish + "&structure=" + structure;
+        }
     </script>
 
 {% endblock %}

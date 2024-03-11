@@ -1,12 +1,30 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+
+def user_directory_path(instance, filename):
+    return 'user_{0}/avatars/{1}'.format(instance.user.id, filename)
+
+
+class BaseModel(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Создан")
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Обновлен", null=True, blank=True)
+    updated_by = models.ForeignKey(User, null=True, on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
 
 
 class Users(models.Model):
-    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, null=True, on_delete=models.CASCADE, verbose_name='Пользователь')
     surname = models.CharField(max_length=100, verbose_name="Фамилия")
     name = models.CharField(max_length=150, verbose_name="Имя, отчество")
     role = models.ForeignKey('Roles', on_delete=models.PROTECT, verbose_name='Роль')
+    email = models.EmailField(max_length=200, unique=True, verbose_name="email")
+    avatar = models.ImageField(upload_to=user_directory_path, default='nophoto.jpg', null=True, verbose_name="Аватар")
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -32,6 +50,9 @@ class Structures(models.Model):
     name = models.CharField(max_length=100, verbose_name="Название")
     description = models.TextField(blank=True, verbose_name="Описание")
     employee = models.ForeignKey('Users', on_delete=models.PROTECT, verbose_name="Сотрудник")
+    plan = models.FloatField(default=0, verbose_name='План')
+    earned = models.FloatField(default=0, verbose_name='Заработано')
+
 
     class Meta:
         verbose_name = 'Структура'
