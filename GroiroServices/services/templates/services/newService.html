@@ -1,0 +1,56 @@
+{% extends 'services/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<header class="pt-5" xmlns="http://www.w3.org/1999/html"></header>
+
+   <section style="margin-top: 10px;margin-bottom: 10px;">
+    <div class="container bg-light py-4 py-xl-5">
+        <form method="post">
+            {% csrf_token %}
+            <div class="row" style="margin-top: 40px;margin-bottom: 40px;">
+                <div class="col">
+                    <h1 class="text-center">Новая услуга</h1>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 40px;margin-bottom: 0px;padding: 0px;">
+                <div class="col">
+                    <p class="text-black-50" style="font-style: italic;">Поля отмеченные * обязательны к заполнению.</p>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 10px;margin-bottom: 10px;">
+                <div class="col-xxl-3 align-self-center">
+                    <p class="text-end" style="margin: 0;">Название услуги*:</p>
+                </div>
+                <div class="col"><input class="form-control" name="name" type="text" placeholder="введите название услуги..." required /></div>
+            </div>
+            <div class="row" style="margin-top: 10px;margin-bottom: 10px;">
+                <div class="col-xxl-3 align-self-center">
+                    <p class="text-end" style="margin: 0;">Описание услуги:</p>
+                </div>
+                <div class="col"><input class="form-control" name="description" type="text" placeholder="введите описание услуги (если необходимо)" /></div>
+            </div>
+            <div class="row" style="margin-top: 10px;margin-bottom: 10px;">
+                <div class="col-xxl-3 align-self-center">
+                    <p class="text-end" style="margin: 0;">Стоимость услуги*:</p>
+                </div>
+                <div class="col"><input class="form-control" name="price" type="number" step="0.01" placeholder="введите стоимость услуги" required /></div>
+            </div>
+            <div class="row" style="margin-top: 10px;margin-bottom: 10px;">
+                <div class="col-xxl-3 align-self-center">
+                    <p class="text-end" style="margin-bottom: 0px;">Добавить для:</p>
+                </div>
+                <div class="col">
+                    <p style="margin-bottom: 0px;padding-left: 20.8px;">{{ structure }}</p>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 40px;margin-bottom: 10px;">
+                <div class="col"><button class="btn btn-success" type="submit" style="border-radius: 10px;">+ Добавить услугу</button></div>
+            </div>
+        </form>
+    </div>
+</section>
+
+
+{% endblock %}

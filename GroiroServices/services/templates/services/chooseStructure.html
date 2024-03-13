@@ -1,0 +1,25 @@
+{% extends 'services/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<header class="pt-5" xmlns="http://www.w3.org/1999/html"></header>
+    <section>
+        <div class="container py-4 py-xl-5" style="margin-top: 30px" >
+            <form >
+                <div class="card-group">
+                    {% for s in structures %}
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title" align="center">{{ s.name }}</h4>
+                                <p class="card-text">{{ s.description }}</p>
+                                <p class="card-text"><b>Оператор:</b> {{ s.employee }}</p>
+                                <a class="btn btn-primary" type="button" href="{% url 'listReports' s.pk %}">Выбрать</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

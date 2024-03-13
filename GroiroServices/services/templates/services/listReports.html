@@ -1,0 +1,176 @@
+{% extends 'services/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<header class="pt-5" xmlns="http://www.w3.org/1999/html"></header>
+    <section>
+        <div class="container py-4 py-xl-5" style="margin-top: 30px" >
+            <form method="post">
+                {% csrf_token %}
+                <h1 style="text-align: right; margin: 20px 40px">{{ structure.name }}. <br>Отчеты</h1>
+
+                <div class="row" style="margin-top: 10px;margin-bottom: 10px;">
+                    <hr>
+
+                    <div class="col text-end"><label class="col-form-label fw-bold text-end">Выберите период:</label></div>
+
+                    <div class="col"><input class="form-control" type="date" id="date_start" name="date_start" value="{{date_start}}"/></div>
+                    <div class="col"><input class="form-control" type="date" id="date_finish" name="date_finish" value="{{date_finish}}"/></div>
+                </div>
+
+                <div class="row" style="margin-top: 10px;margin-bottom: 10px;">
+
+                    <div class="col text-end">
+                        <label class="col-form-label fw-bold text-end">Выберите услугу:</label></div>
+                    <div class="col">
+                        <select class="border border-1 border-primary"  name="service" style="border-radius: 5px; padding: 2px; height: 100%;width: 100%;">
+                            <option value="all">Все услуги</option>
+                            {% for s in services %}
+                                <option value="{{s.pk}}">{{s.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col">
+                    </div>
+
+                </div>
+                <div class="row" style="margin-top: 10px;margin-bottom: 10px; text-align: right">
+                    <div class="col" >
+                        <p>{{date_start}} {{date_finish}} {{service}}</p>
+                    </div>
+                    <div class="col" >
+                        <input class="btn btn-primary" type="submit" style="border-radius: 10px" value="Применить фильтр">
+                        <a class="btn btn-primary" style="border-radius: 10px" href="{% url 'listReports' structure.pk %}">Показать все</a>
+<!--                        <a class="btn btn-primary" style="border-radius: 10px" href=" url 'downloadReport' structure.pk ">Скачать (.xlsx)</a>-->
+                    </div>
+                </div>
+                <hr>
+
+                <div class="table-responsive" style="margin-top: 10px;margin-bottom: 10px;">
+                    <div class="table-responsive" style="margin-top: 10px;margin-bottom: 10px;">
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th class="text-center" style="width: 15%;">Дата</th>
+                                    <th class="text-center">Услуга</th>
+                                    <th class="text-center" style="width: 5%;">Количество</th>
+                                    <th class="text-center" style="width: 10%;">Сумма</th>
+                                    <th class="text-center" style="width: 10%;">В том числе НДС</th>
+                                    <th class="text-center" style="width: 10%;">Дата создания отчета</th>
+                                    <th class="text-center" style="width: 10%;">Дата изменения отчета</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportsTable" >
+                                {% for r in reports %}
+                                    <tr>
+                                        <td class="text-center">{{ r.date|date:"d.m.Y" }}</td>
+                                        <td class="text-center">{{ r.service }}</td>
+                                        <td class="text-center">{{ r.amount }}</td>
+                                        <td class="text-center">{{ r.sum }} руб.</td>
+                                        <td class="text-center">{{ r.nds }} руб.</td>
+                                        <td class="text-center">{{ r.date_create|date:"d.m.Y" }}</td>
+                                        <td class="text-center">{{ r.date_edit|date:"d.m.Y" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot class="table-group-divider">
+                                <tr>
+                                    <td class="fw-bold text-end"></td>
+                                    <td class="text-end"><strong>Итого</strong></td>
+                                    <td class="fw-bold text-center" style="padding-right: 22px;" id="total_count"></td>
+                                    <td class="fw-bold text-center" id="total_sum"></td>
+                                    <td class="fw-bold text-center" id="total_nds"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {Sum()})
+
+        function Sum() {
+            const
+                total_count = document.getElementById('total_count'),
+                total_sum = document.getElementById('total_sum');
+                total_nds = document.getElementById('total_nds');
+
+            let trs = document.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            tc=0;
+            ts=0;
+
+            for (let td=0; td < trs.length; td++){
+                if (trs[td].style.display == '') {
+                    tc = tc + Number(trs[td].getElementsByTagName('td')[2].innerText);
+                    total_count.innerText = tc;
+
+                    ts = ts + parseFloat(trs[td].getElementsByTagName('td')[3].innerText.split(' ')[0].replace(',', '.'))
+                    total_sum.innerText = ts.toFixed(2).replace('.', ',') + ' руб.';
+                }
+            total_nds.innerText = (parseFloat(total_sum.innerText.split(' ')[0].replace(',', '.'))/6).toFixed(2) + ' руб.';
+
+
+            }
+        }
+
+        function Filter_by_service(ths) {
+            const service = ths.value.toUpperCase(),
+                table = document.getElementById('reportsTable'),
+                tr = table.getElementsByTagName('tr');
+
+            for (i = 0; i < tr.length; i++) {
+
+                    td = tr[i].getElementsByTagName('td')[1];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        if (service != 'ALL') {
+                            if (txtValue.toUpperCase().indexOf(service) > -1) {
+                                tr[i].style.display = '';
+                            } else {
+                                tr[i].style.display = 'none';
+                            }
+                        } else {
+                            tr[i].style.display = '';
+                        }
+
+                    }
+
+            }
+            Sum();
+        }
+
+        function  Filter_by_date(){
+            const date_start = new Date(document.getElementById('date_start').value),
+                date_finish = new Date(document.getElementById('date_finish').value),
+                table = document.getElementById('reportsTable'),
+                tr = table.getElementsByTagName('tr');
+            console.log('С ' + date_start + ' по ' + date_finish);
+
+            for (i = 0; i < tr.length; i++) {
+                    td = tr[i].getElementsByTagName('td')[0];
+                    if (td) {
+                        txtValue = td.textContent || td.innerText;
+                        txtValue = txtValue.split('.');
+                        txtValue = new Date(txtValue[2] + '-' + txtValue[1] + '-' + txtValue[0]);
+                        console.log(txtValue);
+
+                        if (txtValue >= date_start && txtValue <= date_finish) {
+                            tr[i].style.display = '';
+                        } else {
+                            tr[i].style.display = 'none';
+                        }
+
+                    }
+
+
+            }
+            Sum();
+        }
+
+    </script>
+
+{% endblock %}

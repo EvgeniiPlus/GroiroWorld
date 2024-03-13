@@ -1,0 +1,59 @@
+{% extends 'services/base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <section class="py-5 mt-5">
+        <div class="container py-5">
+            <div class="row">
+                <div class="col-md-8 col-xl-6 text-center mx-auto">
+                    <h2 class="display-6 fw-bold mb-4">Заказать печать</h2>
+                    <p style="margin-bottom: 0px;font-style: italic;"></p>
+                    <p style="font-style: italic;"></p>
+                </div>
+            </div>
+
+            <div class="row d-flex justify-content-center">
+                <div class="col-md-6">
+                    <div>
+                        <form class="p-3 p-xl-4" method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <div style="margin-bottom: 10px;">
+                                <p>Для заказа услуги заполните форму ниже</p>
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <input class="border rounded form-control" type="text" name="name" placeholder="Введите Ф.И.О" required />
+                            </div>
+                            <div>
+                                <input class="border rounded form-control" type="email" name="email" placeholder="Введите адрес электронной почты" style="margin-bottom: 10px;" />
+                            </div>
+                            <div>
+                                <input class="border rounded form-control" type="tel" name="phone" placeholder="Введите номер телефона " required style="margin-bottom: 10px;" />
+                            </div>
+                            <div>
+                                <label class="form-label" style="margin-bottom: 0px;">Когда Вы хотите забрать заказ?</label>
+                                <input class="border rounded form-control" type="date" name="date_of_receiving"  style="margin-bottom: 10px;" />
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <input class="form-control" name="document" type="file" accept=".doc, .docx, .rtf, .pdf" required />
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <textarea class="form-control" name="comment" placeholder="Комментарий к заказу..."></textarea>
+                            </div>
+                            <div style="margin-bottom: 10px;">
+                                <p style="text-align: justify;">
+                                    <em>Черно-белая печать производится на листах А4. </em><br />
+                                    <strong><em>Стоимость печати 1 страницы составляет {{price}} руб.</em></strong>
+                                </p>
+                                <p style="text-align: justify;">После нажатия кнопки &quot;Отправить&quot; система автоматически пересчитает количество страниц в документе, после чего отправит Вам на электронную почту и Viber конечную стоимость услуги.</p>
+                            </div>
+                            <div><button class="btn btn-primary shadow d-block w-100" type="submit">Отправить</button></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+{% endblock %}
