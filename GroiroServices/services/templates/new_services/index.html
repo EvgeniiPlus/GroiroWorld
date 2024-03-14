@@ -109,29 +109,31 @@
                     </div>
                 </div>
             </div>
+            <div class="col-lg-5 col-xl-6">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="text-primary fw-bold m-0">Скачать отчет кассира-операциониста</h6>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="row align-items-center no-gutters">
+                                    <div class="col me-2"><label class="form-label" style="margin-right: 5px">Выберите дату: </label></div>
+                                    <div class="col me-4"><input class="border rounded" type="date" name="date" required style="text-align: center; width: 100%"/></div>
+                                    <div class="col-auto"><button class="btn btn-primary" type="submit">Скачать</button></div>
+                                </div>
+                            </form>
 
+                        </li>
+                    </ul>
+                </div>
+            </div>
 
         </div>
 
         <div class="col-lg-5 col-xl-4">
-        <div class="card shadow mb-4">
-                <div class="card-header py-3">
-                    <h6 class="text-primary fw-bold m-0">Скачать отчет кассира-операциониста</h6>
-                </div>
-                <ul class="list-group list-group-flush">
-                    <li class="list-group-item">
-                        <form method="post">
-                            {% csrf_token %}
-                            <div class="row align-items-center no-gutters">
-                                <div class="col me-2"><label class="form-label" style="margin-right: 5px">Выберите дату: </label></div>
-                                <div class="col me-2"><input class="border rounded" type="date" name="date" required style="text-align: center; width: 100%"/></div>
-                                <div class="col me-2"><button class="btn btn-primary" type="submit">Скачать</button></div>
-                            </div>
-                        </form>
 
-                    </li>
-                </ul>
-            </div>
             <div class="card shadow mb-4">
                 <div class="card shadow mb-4">
                     <div class="card-header py-3">

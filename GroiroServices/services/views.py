@@ -20,7 +20,7 @@ import pandas
 # from pypdf import PdfFileReader, PdfReader
 import locale
 from docxtpl import DocxTemplate
-
+from num2t4ru import decimal2text
 # import aspose.words as aw
 
 # Create your views here.
@@ -133,33 +133,46 @@ def home(request):
         IOF_operator = operator_name.split(' ')[0][0] + '.' + operator_name.split(' ')[1][0] + '.' + operator_surname
         FIO_operator = operator_surname + ' ' + operator_name.split(' ')[0][0] + '.' + operator_name.split(' ')[1][0] + '.'
 
-        date = request.POST.get('date')
-        date_day = date.split('-')[2]
-        date_month = date.split('-')[1]
-        date_year = date.split('-')[0]
 
-        print(IOF_operator, FIO_operator, date_day, date_month, date_year)
+        date = request.POST.get('date').split('-')[2] + '.' + request.POST.get('date').split('-')[1] + '.' + request.POST.get('date').split('-')[0]
 
-        # doc = DocxTemplate("services/static/template.docx")
-        # context = {'operator': 'Н.С. Гуштын',
-        #            'date': '05.03.2024',
-        #            'sum': '277 руб. 50 коп.',
-        #            'nds': '1 руб. 12 коп.'}
-        # filename = f"Отчет {context['date']}.docx"
-        # filepath = f'services/reports/{filename}'
-        # doc.render(context)
-        # doc.save(filepath)
-        #
-        # chunk_size = 8192
-        #
-        # response = StreamingHttpResponse(FileResponse(open(filepath, 'rb'), chunk_size),
-        #                                  content_type=mimetypes.guess_type(filepath)[0])
-        #
-        # response['Content-Length'] = os.path.getsize(filepath)
-        # response['Content-Disposition'] = "attachment; filename=%s" % filename
-        #
-        # return response
-        return redirect('home')
+        reports_to_print = Reports.objects.filter(structure=Structures.objects.get(employee=Users.objects.get(user=request.user)), date=request.POST.get('date'))
+        int_units = ((u'рубль', u'рубля', u'рублей'), 'm')
+        exp_units = ((u'копейка', u'копейки', u'копеек'), 'f')
+        sum = 0
+        nds = 0
+        servs = ''
+        for i, r in enumerate(reports_to_print):
+            sum += r.sum
+            nds += r.nds
+            servs += f'\t{i+1}. {r.service.name} {(str(r.sum).split(".")[0])} руб. {str("{:.2f}".format(r.sum)).split(".")[1]} коп. ({decimal2text(r.sum,int_units=int_units, exp_units=exp_units)}), ' \
+                     f'в т.ч. НДС - {str(r.nds).split(".")[0]} руб. {str("{:.2f}".format(r.nds)).split(".")[1]} коп.({decimal2text(r.nds,int_units=int_units, exp_units=exp_units)}).\n'
+
+        data = {'res': f'Всего: {str(sum).split(".")[0]} руб. {str(sum).split(".")[1]} коп. ({decimal2text(sum, int_units=int_units, exp_units=exp_units)}), '
+                       f'в т.ч. НДС – {str(nds).split(".")[0]} руб. {str(nds).split(".")[1]} коп.  ({decimal2text(nds, int_units=int_units, exp_units=exp_units)}).',
+                'date': date,
+                'IOF_operator': IOF_operator,
+                'FIO_operator': FIO_operator,
+                'servs': servs,
+                }
+
+        doc = DocxTemplate("services/static/template.docx")
+
+        filename = f"Отчет {data['date']}.docx"
+        filepath = f'services/reports/{filename}'
+        doc.render(data)
+        doc.save(filepath)
+
+        chunk_size = 8192
+
+        response = StreamingHttpResponse(FileResponse(open(filepath, 'rb'), chunk_size),
+                                         content_type=mimetypes.guess_type(filepath)[0])
+
+        response['Content-Length'] = os.path.getsize(filepath)
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+
+        return response
+        # return redirect('home')
 
     return render(request, 'new_services/index.html', context)
 
