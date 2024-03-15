@@ -148,8 +148,8 @@ def home(request):
             servs += f'\t{i+1}. {r.service.name} {(str(r.sum).split(".")[0])} руб. {str("{:.2f}".format(r.sum)).split(".")[1]} коп. ({decimal2text(r.sum,int_units=int_units, exp_units=exp_units)}), ' \
                      f'в т.ч. НДС - {str(r.nds).split(".")[0]} руб. {str("{:.2f}".format(r.nds)).split(".")[1]} коп.({decimal2text(r.nds,int_units=int_units, exp_units=exp_units)}).\n'
 
-        data = {'res': f'Всего: {str(sum).split(".")[0]} руб. {str(sum).split(".")[1]} коп. ({decimal2text(sum, int_units=int_units, exp_units=exp_units)}), '
-                       f'в т.ч. НДС – {str(nds).split(".")[0]} руб. {str(nds).split(".")[1]} коп.  ({decimal2text(nds, int_units=int_units, exp_units=exp_units)}).',
+        data = {'res': f'Всего: {str(sum).split(".")[0]} руб. {str(round(sum, 2)).split(".")[1]} коп. ({decimal2text(sum, int_units=int_units, exp_units=exp_units)}), '
+                       f'в т.ч. НДС – {str(nds).split(".")[0]} руб. {str(round(nds, 2)).split(".")[1]} коп.  ({decimal2text(nds, int_units=int_units, exp_units=exp_units)}).',
                 'date': date,
                 'IOF_operator': IOF_operator,
                 'FIO_operator': FIO_operator,
