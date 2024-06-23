@@ -1,0 +1,65 @@
+{% extends 'library_base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="d-sm-flex justify-content-between align-items-center mb-4">
+    <h3 class="text-dark mb-0">{{ title }}</h3>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="row">
+            <div class="col" style="padding-top: 10px;border-top: 1px solid var(--bs-gray-500);border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;margin: 0;margin-bottom: 0px;">Шифр: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ article.index }}</span></em></label>
+                <p style="font-style: italic;"></p>
+            </div>
+            <div class="col" style="padding-top: 10px;border-top: 1px solid var(--bs-gray-500);border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;margin: 0;">Автор: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ article.author_lastname }} {{ article.author_initials }}</span></em></label>
+            </div>
+{#            <div class="col" style="padding-top: 10px;border-top: 1px solid var(--bs-gray-500);border-bottom: 1px solid var(--bs-gray-500);">#}
+{#                <label class="form-label" style="font-weight: bold;margin: 0;">Автор: </label>#}
+{#                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ book.author }}</span></em></label>#}
+{#            </div>#}
+        </div>
+
+        <div class="row" style="margin-top: 15px;">
+            <div class="col" style="border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;">Название статьи: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ article.title_article }}</span></em></label>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 15px;">
+            <div class="col" style="border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;">Название журнала: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ article.title_magazine }}</span></em></label>
+                <p style="font-style: italic;"></p>
+            </div>
+            <div class="col" style="border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;">Дата публикации: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ article.pub_date }}</span></em></label>
+                <p style="font-style: italic;"></p>
+            </div>
+            <div class="col" style="border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;">Номер: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ article.pub_number }}</span></em></label>
+            </div>
+            <div class="col" style="border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;">Страницы: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ article.num_pages }}</span></em></label>
+            </div>
+        </div>
+            {% if article.file %}
+                <a class="btn btn-primary" style="margin-top: 15px;" href="{{ article.file.url }}">Скачать статью в эл.версии</a>
+            {% else %}
+                <p class="fw-bold text-danger">Электронная версия статьи отсутствует</p>
+                <a class="btn btn-secondary" style="margin-top: 15px;" href="#">Скачать статью (.pdf)</a>
+            {% endif %}
+
+        <a class="btn btn-primary" style="margin-top: 15px;" href="{% url 'download_cardarticle' article.pk %}">Скачать карточку</a>
+        <a class="btn btn-primary" style="margin-top: 15px;margin-left: 10px;" href="{% url 'edit_article' article.pk %}">Редактировать статью</a>
+        <a class="btn btn-danger" style="margin-top: 15px;margin-left: 10px;" href="{% url 'del_article' article.pk %}">Удалить статью</a>
+    </div>
+</div>
+{% endblock %}

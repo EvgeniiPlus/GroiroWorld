@@ -1,0 +1,51 @@
+{% extends 'library_base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="d-sm-flex justify-content-between align-items-center mb-4">
+    <h3 class="text-dark mb-0">{{ title }}</h3>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col">
+            <div class="row">
+                <div class="col"><label class="form-label">Шифр:</label><input class="form-control" type="text" name="index" value="{{ article.index }}"/></div>
+                <div class="col"><label class="form-label">Фамилия автора:</label><input class="form-control" type="text" name="author_lastname" value="{{ article.author_lastname }}"/></div>
+                <div class="col"><label class="form-label">Инициалы автора:</label><input class="form-control" type="text" name="author_initials" value="{{ article.author_initials }}"/></div>
+            </div>
+            <div class="row" style="margin-top: 15px;">
+                <div class="col"><label class="form-label">Название статьи:</label><textarea class="form-control" rows="2" cols="3" name="title_article">{{ article.title_article }}</textarea></div>
+                <div class="col"><label class="form-label">Название журнала:</label><input class="form-control" type="text" name="title_magazine" value="{{ article.title_magazine }}"/></div>
+
+            </div>
+            <div class="row" style="margin-top: 15px;">
+                <div class="col"><label class="form-label">Дата публикации:</label><input class="form-control" type="text" name="pub_date" value="{{ article.pub_date }}"/></div>
+                <div class="col"><label class="form-label">Номер журнала:</label><input class="form-control" type="text" name="pub_number" value="{{ article.pub_number }}"/></div>
+                <div class="col"><label class="form-label">Страницы:</label><input class="form-control" type="text" name="num_pages" value="{{ article.num_pages }}"/></div>
+            </div>
+
+        </div>
+        <div class="row" style="margin-top: 15px;">
+            <div class="col">
+                <label class="form-label">Электронная версия статьи (только .pdf):</label>
+                {% if article.file %}
+                    <input class="form-control" type="file" accept="application/pdf" name="file" value="{{ article.file.url}}"/>
+                {% else %}
+                    <input class="form-control" type="file" accept="application/pdf" name="file" value=""/>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-primary" type="submit" style="margin-top: 15px;margin-right: 7px;">Сохранить</button>
+</form>
+
+<script>
+    document.getElementById('getFile').onchange = function () {
+      let src = URL.createObjectURL(this.files[0]);
+      document.getElementById('imgbook').src = src;
+    }
+</script>
+
+{% endblock %}

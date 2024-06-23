@@ -1,0 +1,94 @@
+{% extends 'library_base.html' %}
+{% load static %}
+<!--{% load googlecharts %}-->
+
+{% block content %}
+<div class="d-sm-flex justify-content-between align-items-center mb-4">
+    <h3 class="text-dark mb-0">{{ title }} <i><u>{{ search_item }}</u></i></h3>
+</div>
+
+    <div class="row">
+        <div class="col" style="text-align: center;">
+            <form class="d-none d-sm-inline-block me-auto ms-md-3 my-7 my-md-0 mw-100 navbar-search" action="{% url 'search_book' %}" method="get" style="width: 50%;">
+                {% csrf_token %}
+                <div class="input-group border rounded border-1 border-primary">
+                    <input class="form-control border-0 small" type="text" name="search" required placeholder="Поиск..." value="{{ search_item }}"/>
+                    <button class="btn btn-primary py-0" type="submit"><i class="fas fa-search"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <hr style="color: var(--bs-blue);font-size: 16px;" />
+    <div class="row" style="margin-top: 15px;">
+        <div class="col">
+            <div class="table-responsive">
+            {% if books %}
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr class="text-center">
+                            <th>Индекс</th>
+                            <th>Автор</th>
+                            <th>Название</th>
+                            <th>Год</th>
+                            <th>Инв. номер</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for book in books %}
+                        <tr>
+                            <td class="text-center">{{ book.index }}</td>
+                            <td>{{ book.author }}</td>
+                            <td><a href="{% url 'show_book' book.pk %}">{{ book.title }}</a></td>
+                            <td class="text-center">{{ book.pub_date }}</td>
+                            <td class="text-center">{{ book.invent_number }}</td>
+                            <td class="text-center d-xl-flex align-items-xl-center">
+                                    <a href="{% url 'show_book' book.pk %}" style="padding: 5px;"><i class="far fa-eye fs-4 text-primary"></i></a>
+                                    <a href="{% url 'del_book' book.pk %}" style="padding: 5px;"><i class="far fa-trash-alt fs-4 text-danger"></i></a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                        <div><h3>Ничего не найдено</h3></div>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block navigation %}
+    {% if page_obj.has_other_pages %}
+        <nav class="d-lg-flex justify-content-lg-end dataTables_paginate paging_simple_numbers">
+            <ul class="pagination">
+                {% if page_obj.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" aria-label="Previous" href="?page={{ page_obj.previous_page_number }}">
+                            <span aria-hidden="true">«</span>
+                        </a>
+                    </li>
+                {% endif %}
+
+                {% for p in paginator.page_range %}
+                    {% if page_obj.number == p %}
+                        <li class="page-item active"><a class="page-link" href="#">{{ p }}</a></li>
+                    {% elif p >= page_obj.number|add:-3 and p <= page_obj.number|add:3 %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ p }}">{{ p }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" aria-label="Next" href="?page={{ page_obj.next_page_number }}">
+                                <span aria-hidden="true">»</span>
+                            </a>
+                        </li>
+                {% endif %}
+            </ul>
+        </nav>
+    {% endif %}
+{% endblock %}

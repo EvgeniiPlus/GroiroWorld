@@ -1,0 +1,149 @@
+{% extends 'library_base.html' %}
+{% load static %}
+<!--{% load googlecharts %}-->
+
+{% block content %}
+            <div class="d-sm-flex justify-content-between align-items-center mb-4">
+                <h3 class="text-dark mb-0">Личный кабинет</h3>
+<!--                <a class="btn btn-primary btn-sm d-none d-sm-inline-block" role="button" href="#">-->
+<!--                    <i class="fas fa-download fa-sm text-white-50"></i>-->
+<!--                    Скачать отчет-->
+<!--                </a>-->
+            </div>
+
+    <div class="row">
+        <div class="col-lg-7 col-xl-8">
+            <div class="row">
+                <div class="col col-xl-6 mb-4">
+                    <div class="card shadow border-start-primary py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase text-primary fw-bold text-xs mb-1"><span>Количество книг</span></div>
+                                    <div class="text-dark fw-bold h5 mb-0">
+
+                                            <span> {{num_books}} шт.</span>
+
+                                    </div>
+                                </div>
+                                <div class="col-auto"><i class="fas fa-book fa-2x text-gray-300"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col col-xl-6 mb-4">
+                    <div class="card shadow border-start-success py-2">
+                        <div class="card-body">
+                            <div class="row align-items-center no-gutters">
+                                <div class="col me-2">
+                                    <div class="text-uppercase text-success fw-bold text-xs mb-1"><span>Количество статей</span></div>
+                                    <div class="text-dark fw-bold h5 mb-0">
+                                            <span>{{num_articles}} шт.</span>
+                                    </div>
+                                </div>
+                                <div class="col-auto"><i class="far fa-copy fa-2x text-gray-300"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+
+            </div>
+
+            <div class="card shadow mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h6 class="text-primary fw-bold m-0">График пополнения библиотечного фонда</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-area">
+
+
+                            <div class="chart-area" id="graph">
+                                <canvas id="chart" height="100%"></canvas>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+        <div class="col-lg-5 col-xl-4">
+            <div class="card shadow mb-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="text-primary fw-bold m-0">Последние добавленные книги</h6>
+                    </div>
+                    <div class="card-body">
+                    <ul>
+                        {% for l_book in last_books %}
+                                <li><a href="{% url 'show_book' l_book.pk %}">{{ l_book }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card shadow mb-4">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="text-primary fw-bold m-0">Последние добавленные статьи</h6>
+                    </div>
+                    <div class="card-body">
+                    <ul>
+                        {% for l_article in last_articles %}
+                            <li><a href="{% url 'show_article' l_article.pk %}">{{ l_article }}</a></li>
+
+                        {% endfor %}
+                    </ul>
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+<script>
+    let ctx = document.getElementById("chart").getContext("2d");
+    let data = [
+        {% for key, value in chart.items %}
+          parseFloat('{{ value}}'.replace(',','.')),
+        {% endfor %}
+        ]
+    let labels = [
+        {% for key, value in chart.items %}
+          "{{ key }}",
+        {% endfor %}
+        ]
+
+    let chart = new Chart(ctx, {
+      type: "line",
+      data: {
+         labels: labels,
+         datasets: [
+            {
+              label: "Заработано",
+              backgroundColor: "rgba(0,66,255,0.08)",
+              borderColor: "#4e73df",
+              data: data
+            }
+         ]
+      },
+      options: {
+         title: {
+            text: "Gross Volume in 2020",
+            display: false,
+         },
+        plugins: {
+            legend: false,
+        }
+      }
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends 'library_base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="d-sm-flex justify-content-between align-items-center mb-4">
+    <h3 class="text-dark mb-0">{{ title }}</h3>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="row">
+            <div class="col" style="padding-top: 10px;border-top: 1px solid var(--bs-gray-500);border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;margin: 0;margin-bottom: 0px;">Индекс: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ book.index }}</span></em></label>
+                <p style="font-style: italic;"></p>
+            </div>
+            <div class="col" style="padding-top: 10px;border-top: 1px solid var(--bs-gray-500);border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;margin: 0;">Авторский знак: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ book.author_mark }}</span></em></label>
+            </div>
+            <div class="col" style="padding-top: 10px;border-top: 1px solid var(--bs-gray-500);border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;margin: 0;">Автор: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ book.author }}</span></em></label>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 15px;">
+            <div class="col" style="border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;">Название: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ book.title }}</span></em></label>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 15px;">
+            <div class="col" style="border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;">Место издания: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ book.pub_place }}</span></em></label>
+                <p style="font-style: italic;"></p>
+            </div>
+            <div class="col" style="border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;">Издательство: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ book.publishing }}</span></em></label>
+                <p style="font-style: italic;"></p>
+            </div>
+            <div class="col" style="border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;">Год: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ book.pub_date }}</span></em></label>
+            </div>
+            <div class="col" style="border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;">Количество страниц: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ book.num_pages }}</span></em></label>
+            </div>
+        </div>
+
+        <div class="row" style="margin-top: 15px;">
+            <div class="col" style="border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;">Инвентарный номер: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ book.invent_number }}</span></em></label>
+            </div>
+            <div class="col" style="border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;margin-bottom: 0px;">Цена (бел. руб.): </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ book.price }}</span></em></label>
+            </div>
+            <div class="col" style="border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;">Номер в книге: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ book.num_in_issue_book }}</span></em></label>
+            </div>
+            <div class="col" style="border-bottom: 1px solid var(--bs-gray-500);">
+                <label class="form-label" style="font-weight: bold;">Количество копий: </label>
+                <label class="form-label" style="font-weight: bold;margin: 0;"><em><span style="font-weight: normal !important;">{{ book.number_of_copies }}</span></em></label>
+            </div>
+        </div>
+
+        <a class="btn btn-primary" style="margin-top: 15px;" href="{% url 'download_book' book.pk %}">Скачать</a>
+        <a class="btn btn-primary" style="margin-top: 15px;margin-left: 10px;" href="{% url 'edit_book' book.pk %}">Редактировать</a>
+        <a class="btn btn-danger" style="margin-top: 15px;margin-left: 10px;" href="{% url 'del_book' book.pk %}">Удалить</a>
+    </div>
+    <div class="col-3">
+        <img class="img-thumbnail img-fluid border rounded-2" src="{{ book.img.url }}" style="text-align: center;" />
+    </div>
+</div>
+{% endblock %}
