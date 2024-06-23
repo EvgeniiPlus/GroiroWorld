@@ -1,0 +1,81 @@
+{% extends 'users_base.html' %}
+
+{% load l10n %}
+
+{% block content %}
+    <h3 class="text-dark mb-4">{{title}}</h3>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row mb-3">
+            <div class="col-lg-4">
+                <div class="card mb-3" style="height: 100%;">
+                    <div class="card-body text-center shadow">
+                        <img class="img-thumbnail img-fluid border rounded-5" id="imgAvatar" src="{{userAvatar.url}}" />
+                        <div class="mb-3">
+                            <input class="form-control" id="getFile" name="avatar" type="file" accept="image/*" style="display: none"/>
+                            <button class="btn btn-primary btn-sm" type="button" onclick="document.getElementById('getFile').click()">Заменить изображение...</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-8">
+                <div class="row">
+                    <div class="col">
+                        <div class="card shadow mb-3" style="height: 100%;">
+                            <div class="card-header py-3">
+                                <p class="text-primary m-0 fw-bold">Данные о пользователе</p>
+                            </div>
+                            <div class="card-body">
+
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="username"><strong>Логин</strong></label>
+                                                <input id="username" class="form-control" type="text" name="login" value="{{userInfo.username}}" readonly/>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="email"><strong>Электронная почта</strong></label>
+                                                <input id="email" class="form-control" type="email" value="{{userInfo.email}}" name="email" required/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
+                                    <p ><a href="{% url 'password_change' %}">Сменить пароль</a></p>
+                                    <div class="row">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="first_name"><strong>Имя, отчество</strong></label>
+                                                <input id="first_name" class="form-control" type="text" value="{{userInfo.first_name}}" name="name" required/>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label class="form-label" for="last_name"><strong>Фамилия</strong></label>
+                                                <input id="last_name" class="form-control" type="text" value="{{userInfo.last_name}}" name="surname" required/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <button class="btn btn-primary btn-sm" type="submit">Сохранить изменения</button>
+                                        <button class="btn btn-primary btn-sm" type=button onClick="javascript:history.go(-1);">Вернуться</button>
+                                    </div>
+                                    <div class="mb-3"></div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <script>
+        document.getElementById('getFile').onchange = function () {
+          var src = URL.createObjectURL(this.files[0]);
+          document.getElementById('imgAvatar').src = src;
+        }
+    </script>
+{% endblock %}

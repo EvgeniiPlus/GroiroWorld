@@ -1,0 +1,89 @@
+{% extends 'services_base.html' %}
+{% load static %}
+
+{% block content %}
+
+    <div class="container-fluid">
+        <h3 class="text-dark mb-4">{{ structure.name }}. Ежедневный отчет</h3>
+        <div class="card shadow">
+            <div class="card-body">
+                <form method="post">
+                    {% csrf_token %}
+                    <label class="form-label">Выберите дату:&nbsp;</label>
+                    <input class="border rounded" type="date"  name="service_date" value="{{ current_date|date:'Y-m-d' }}"
+                           style="padding: 5px;padding-right: 10px;padding-left: 10px;">
+                    <div class="table-responsive table mt-2" role="grid" aria-describedby="dataTable_info">
+                        {% if services %}
+                            <table class="table table-striped table-bordered my-0" id="dataTable">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">Услуга</th>
+                                        <th class="text-center">Стоимость</th>
+                                        <th class="text-center">Количество</th>
+                                        <th class="text-center">Сумма</th>
+                                        <th class="text-center">В том числе НДС</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for s in services %}
+                                        <tr>
+                                            <td class="text-start" name="service_name">{{ s.name }}</td>
+                                            <td style="width: 10%;text-align: center;" name="service_price">{{ s.price }} руб.</td>
+                                            <td style="width: 12%;">
+                                                <input type="number" style="text-align: center;width: 100%;" min="0" step="1" value="0" required name="service_count" onchange="Sum(this, '{{s.price}}')">
+                                            </td>
+                                            <td style="width: 10%;text-align: center;" name="service_sum">0 руб.</td>
+                                            <td style="width: 15%;text-align: center;" name="nds">0 руб.</td>
+                                            <td hidden><input type="number" value={{s.pk}} name="service_id"></td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td></td>
+                                        <td class="text-end"><strong>Итого</strong></td>
+                                        <td class="text-center" id="total_count"><strong></strong></td>
+                                        <td class="text-center" id="total_sum"><strong></strong></td>
+                                        <td class="fw-bold text-center" id="total_nds"></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        {% else %}
+                            <h2><b><i> Услуг нет =( </i></b></h2>
+                        {% endif %}
+                    </div>
+                    <button class="btn btn-primary" type="submit">Отправить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function Sum(ths, price) {
+            const tr = ths.parentNode.parentNode,
+                count = tr.getElementsByTagName('input')[0].value,
+                sum = Number(count) * parseFloat(price.replace(',', '.')),
+                nds = sum/6,
+                total_count = document.getElementById('total_count'),
+                total_sum = document.getElementById('total_sum'),
+                total_nds = document.getElementById('total_nds');
+            tr.getElementsByTagName('td')[3].innerText = sum.toFixed(2).replace('.', ',') + ' руб.';
+            tr.getElementsByTagName('td')[4].innerText = nds.toFixed(2).replace('.', ',') + ' руб.';
+
+            let trs = document.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+            tc = 0;
+            ts = 0;
+            for (let td = 0; td < trs.length; td++) {
+                tc = tc + Number(trs[td].getElementsByTagName('input')[0].value);
+                total_count.innerText = tc;
+
+                ts = ts + parseFloat(trs[td].getElementsByTagName('td')[3].innerText.split(' ')[0].replace(',', '.'))
+                total_sum.innerText = ts.toFixed(2).replace('.', ',') + ' руб.';
+            }
+            total_nds.innerText = (parseFloat(total_sum.innerText.split(' ')[0].replace(',', '.')) / 6).toFixed(2) + ' руб.';
+
+        }
+
+        // https://javascript.ru/forum/dom-window/34306-poluchit-znachenie-yacheek-opredelennojj-stroki-tablicy.html
+    </script>
+{% endblock %}
