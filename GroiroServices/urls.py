@@ -27,7 +27,9 @@ urlpatterns = [
     path('services/', include('services.urls')),
     path('users/', include('users.urls')),
     path('library/', include('library.urls')),
+    path('webhook/', include('webhook.urls')),
     path('', include('AllGroiro.urls')),
+
 ]
 
 if settings.DEBUG:

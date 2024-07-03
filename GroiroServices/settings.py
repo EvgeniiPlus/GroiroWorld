@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'AllGroiro.apps.AllgroiroConfig',
     'users.apps.UsersConfig',
     'library.apps.LibraryConfig',
+    'webhook',
 ]
 
 MIDDLEWARE = [
