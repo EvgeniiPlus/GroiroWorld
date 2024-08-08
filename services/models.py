@@ -50,9 +50,22 @@ class Reports(models.Model):
     date = models.DateField(verbose_name='Дата')
     structure = models.ForeignKey('Structures', on_delete=models.PROTECT, verbose_name="Структура")
     service = models.ForeignKey('Services', on_delete=models.SET_NULL, null=True, verbose_name="Услуга")
-    amount = models.PositiveIntegerField(verbose_name="Количество")
-    sum = models.FloatField(verbose_name="Сумма")
-    nds = models.FloatField(verbose_name='Из них НДС', blank=True, default=0)
+
+    # Наличный рассчет
+    cash_amount = models.PositiveIntegerField(verbose_name="Количество (наличные)", default=0)
+    cash_sum = models.FloatField(verbose_name="Сумма (наличные)", default=0)
+    cash_nds = models.FloatField(verbose_name='Из них НДС (наличные)', blank=True, default=0)
+
+    #Безналичный рассчет
+    card_amount = models.PositiveIntegerField(verbose_name="Количество (безналичные)", default=0)
+    card_sum = models.FloatField(verbose_name="Сумма (безналичные)", default=0)
+    card_nds = models.FloatField(verbose_name='Из них НДС (безналичные)', blank=True, default=0)
+
+    #Общая
+    amount = models.PositiveIntegerField(verbose_name="Количество (общее)")
+    sum = models.FloatField(verbose_name="Сумма (общее)")
+    nds = models.FloatField(verbose_name='Из них НДС (общее)', blank=True, default=0)
+
     date_create = models.DateTimeField(auto_now_add=True, verbose_name="Создано")
     date_edit = models.DateTimeField(auto_now=True, verbose_name="Изменено")
 

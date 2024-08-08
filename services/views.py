@@ -108,7 +108,10 @@ def home(request):
             services_sum[service.name] = round(sum, 2)
         context['services_sum'] = services_sum
 
-        context['main_progress'] = round(context['structure'].earned / context['structure'].plan * 100, 1)
+        if context['structure'].plan != 0:
+            context['main_progress'] = round(context['structure'].earned / context['structure'].plan * 100, 1)
+        else:
+            context['main_progress'] = 0
 
     elif ('Экономисты' in groups or 'Администраторы' in groups):
 
@@ -124,7 +127,10 @@ def home(request):
         context['plan'] = round(plan, 2)
 
         # Выполнение плана
-        context['main_progress'] = round(sum / plan * 100, 1)
+        if plan != 0:
+            context['main_progress'] = round(sum / plan * 100, 1)
+        else:
+            context['main_progress'] = 0
 
         # График
         chart = {}
@@ -179,7 +185,7 @@ def home(request):
             'IOF_operator': IOF_operator,
             'FIO_operator': FIO_operator,
             'servs': servs,
-            }
+        }
 
         doc = DocxTemplate("services/static/template.docx")
 
@@ -230,52 +236,66 @@ def dailyReport(request):
         'current_date': timezone.now(),
         'userAvatar': Profile.objects.get(user=request.user).avatar,
     }
-
     if request.method == 'POST':
         date = request.POST.get('service_date')
         service_id_list = request.POST.getlist('service_id')
-        service_count_list = request.POST.getlist('service_count')
+        service_count_cash_list = request.POST.getlist('service_count_cash')
+        service_count_card_list = request.POST.getlist('service_count_card')
 
         for i in range(len(service_id_list)):
-            sum = round(int(service_count_list[i]) * Services.objects.filter(pk=service_id_list[i])[0].price, 2)
+            cash_sum = round(int(service_count_cash_list[i]) * Services.objects.filter(pk=service_id_list[i])[0].price,
+                             2)
+            card_sum = round(int(service_count_card_list[i]) * Services.objects.filter(pk=service_id_list[i])[0].price,
+                             2)
 
-            if int(service_count_list[i]) != 0:
+            if int(service_count_cash_list[i]) != 0 or int(service_count_card_list[i]) != 0:
                 try:
                     report = Reports.objects.get(date=date, service=Services.objects.get(pk=service_id_list[i]),
                                                  structure=Structures.objects.filter(employee=user)[0])
-                    report.amount = report.amount + int(service_count_list[i])
-                    report.sum += sum
-                    report.nds += round(sum / 6, 2)
-                    report.save(update_fields=['amount', 'sum', 'nds'])
+
+                    cash_amount = report.cash_amount + int(service_count_cash_list[i])
+                    report.cash_amount = cash_amount
+                    cash_sum = report.cash_sum + cash_sum
+                    report.cash_sum = cash_sum
+                    cash_nds = report.cash_nds + round(cash_sum / 6, 2)
+                    report.cash_nds = cash_nds
+
+                    card_amount = report.card_amount + int(service_count_card_list[i])
+                    report.card_amount = card_amount
+                    card_sum = report.card_sum + card_sum
+                    report.card_sum = card_sum
+                    card_nds = report.card_nds + round(card_sum / 6, 2)
+                    report.card_nds = card_nds
+
+                    report.amount = cash_amount + card_amount
+                    report.sum = cash_sum + card_sum
+                    report.nds = cash_nds + card_nds
+
+                    report.save(
+                        update_fields=['cash_amount', 'cash_sum', 'cash_nds', 'card_amount',
+                                       'card_sum', 'card_nds', 'amount', 'sum', 'nds'])
+
                 except Reports.DoesNotExist:
                     Reports.objects.create(
                         date=date,
                         service=Services.objects.get(pk=service_id_list[i]),
                         structure=Structures.objects.filter(employee=user)[0],
-                        amount=service_count_list[i],
-                        sum=sum,
-                        nds=round(sum / 6, 2)
+
+                        cash_amount=service_count_cash_list[i],
+                        cash_sum=cash_sum,
+                        cash_nds=round(cash_sum / 6, 2),
+
+                        card_amount=service_count_card_list[i],
+                        card_sum=card_sum,
+                        card_nds=round(cash_sum / 6, 2),
+
+                        amount=int(service_count_cash_list[i]) + int(service_count_card_list[i]),
+                        sum=cash_sum + card_sum,
+                        nds=round((cash_sum + card_sum) / 6, 2)
                     )
 
-                # report = Reports.objects.get(date=date, service=Services.objects.get(pk=service_id_list[i]),
-                #                              structure=Structures.objects.filter(employee=Profile.objects.get(user=request.user))[0])
-                # if report:
-                #     report.amount += service_count_list[i]
-                #     report.sum += sum
-                #     report.nds += round(sum / 6, 2)
-                #     report.save(update_fields=['amount', 'sum', 'nds'])
-                # else:
-                #     Reports.objects.create(
-                #         date=date,
-                #         service=Services.objects.get(pk=service_id_list[i]),
-                #         structure=Structures.objects.filter(employee=Profile.objects.get(user=request.user))[0],
-                #         amount=service_count_list[i],
-                #         sum=sum,
-                #         nds=round(sum / 6, 2)
-                #     )
-
                 updSum = Structures.objects.get(employee=user)
-                updSum.earned += sum
+                updSum.earned = updSum.earned + cash_sum + card_sum
                 updSum.save(update_fields=['earned'])
             else:
                 continue
