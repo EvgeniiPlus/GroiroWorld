@@ -7,6 +7,8 @@ from wsgiref.util import FileWrapper
 from _ctypes import Structure
 from django.contrib import auth
 from django.utils import timezone
+from openpyxl.workbook import Workbook
+from openpyxl.styles import Alignment, Font, NamedStyle
 from pytils import translit
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
@@ -406,32 +408,113 @@ def downloadReport(request):
 
     dates = []
     services = []
-    amounts = []
-    sums = []
+    cash_amounts = []
+    cash_sums = []
+    card_amounts = []
+    card_sums = []
+    total_amounts = []
+    total_sums = []
 
     for r in reports:
-        dates.append(r.date)
-        services.append(r.service)
-        amounts.append(r.amount)
-        sums.append(r.sum)
+        dates.append(str(r.date))
+        services.append(str(r.service))
+        cash_amounts.append(int(r.cash_amount))
+        cash_sums.append(float(r.cash_sum))
+        card_amounts.append(int(r.card_amount))
+        card_sums.append(float(r.card_sum))
+        total_amounts.append(int(r.amount))
+        total_sums.append(float(r.sum))
 
     dates.append('')
-    sums.append(f'=SUM(D2:D{len(sums) + 1})')
-    amounts.append(f'=SUM(C2:C{len(amounts) + 1})')
+    cash_amounts.append(f'=SUM(C3:C{len(cash_amounts) + 2})')
+    cash_sums.append(f'=SUM(D3:D{len(cash_sums) + 2})')
+    card_amounts.append(f'=SUM(E3:E{len(card_amounts) + 2})')
+    card_sums.append(f'=SUM(F3:F{len(card_sums) + 2})')
+    total_amounts.append(f'=SUM(G3:G{len(total_amounts) + 2})')
+    total_sums.append(f'=SUM(H3:H{len(total_sums) + 2})')
     services.append('Итого:')
 
-    df = pandas.DataFrame({'Дата': dates,
-                           'Услуга': services,
-                           'Количество': amounts,
-                           'Сумма': sums,
-                           })
+    # Вариант pandas
+    # data = {
+    #     ('', 'Дата'): dates,
+    #     ('', 'Услуга'): services,
+    #     ('Наличный рассчет', 'Количество'): cash_amounts,
+    #     ('Наличный рассчет', 'Сумма'): cash_sums,
+    #     ('Безналичный рассчет', 'Количество'): card_amounts,
+    #     ('Безналичный рассчет', 'Сумма'): cash_sums,
+    #     ('Итого', 'Количество'): total_amounts,
+    #     ('Итого', 'Сумма'): total_sums,
+    # }
+    # df = pandas.DataFrame(data)
+
+    # df = pandas.DataFrame({'Дата': dates,
+    #                        'Услуга': services,
+    #                        'Нал. количество': cash_amounts,
+    #                        'Нал. сумма': cash_sums,
+    #                        'Безнал. количество': card_amounts,
+    #                        'Безнал. сумма': card_sums,
+    #                        'Общее количество': total_amounts,
+    #                        'Общая сумма': total_sums,
+    #                        })
     if date_start and date_finish == '':
         filename = f'Отчет_all_time.xlsx'
     else:
         filename = f'Отчет_{date_start}-{date_finish}.xlsx'
 
     filepath = f'services/reports/{filename}'
-    df.to_excel(filepath, index=False)
+    # df.to_excel(filepath, index=True)
+
+    # Вариант openpyxl
+    wb = Workbook()
+    ws = wb.active
+
+    ws['A1'] = 'Дата'
+    ws['B1'] = 'Услуга'
+    ws['C1'] = 'Наличный расчет'
+    ws['C2'] = 'Количество'
+    ws['D2'] = 'Сумма'
+    ws['E1'] = 'Безналичный расчет'
+    ws['E2'] = 'Количество'
+    ws['F2'] = 'Сумма'
+    ws['G1'] = 'Итого'
+    ws['G2'] = 'Количество'
+    ws['H2'] = 'Сумма'
+
+    ws.merge_cells('C1:D1')
+    ws.merge_cells('E1:F1')
+    ws.merge_cells('G1:H1')
+    ws.merge_cells('A1:A2')
+    ws.merge_cells('B1:B2')
+
+    data2 = {
+        'A': dates,
+        'B': services,
+        'C': cash_amounts,
+        'D': cash_sums,
+        'E': card_amounts,
+        'F': card_sums,
+        'G': total_amounts,
+        'H': total_sums,
+    }
+
+    # date_style = NamedStyle(name='date_style', number_format='YYYY.MM.DD')
+    # wb.add_named_style(date_style)
+
+    for col, data in data2.items():
+        for i, value in enumerate(data, start=3):
+            cell = ws[f'{col}{i}']
+            cell.value = value
+            cell.alignment = Alignment(horizontal='center', vertical='center')
+            if i == len(data) + 2 and col != 'A':
+                cell.font = Font(bold=True)
+            # if col == 'A' and value is not None:
+            #     cell.style = date_style
+
+    for cell in ['A1', 'B1', 'C1', 'E1', 'G1', 'C2', 'D2', 'E2', 'F2', 'G2', 'H2']:
+        ws[cell].alignment = Alignment(horizontal='center', vertical='center')
+        ws[cell].font = Font(bold=True)
+
+    wb.save(filepath)
 
     chunk_size = 8192
 
