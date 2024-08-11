@@ -32,3 +32,4 @@ media
 # Gradle
 .idea/**/gradle.xml
 .idea/**/libraries
+/services/reports/
