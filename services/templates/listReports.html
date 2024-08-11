@@ -54,12 +54,22 @@
                 <table class="table table-striped table-sm table-bordered my-0">
                     <thead>
                         <tr>
-                            <th>Дата</th>
-                            <th>Услуга</th>
-                            <th>Количество</th>
-                            <th>Сумма</th>
-                            <th>В том числе НДС</th>
-                            <th>Дата создания отчета</th>
+                            <th class="text-center" rowspan="2">Дата</th>
+                            <th class="text-center" rowspan="2">Услуга</th>
+                            <th class="text-center" colspan="2">Оплата наличными</th>
+                            <th class="text-center" colspan="2">Оплата по карте</th>
+                            <th class="text-center" colspan="2">Итого</th>
+                            <th class="text-center" rowspan="2">Дата создания отчета</th>
+                        </tr>
+                        <tr>
+                            <th class="text-center">Количество</th>
+                            <th class="text-center">Сумма</th>
+{#                            <th class="text-center">В том числе НДС</th>#}
+                            <th class="text-center">Количество</th>
+                            <th class="text-center">Сумма</th>
+                            <th class="text-center">Количество</th>
+                            <th class="text-center">Сумма</th>
+{#                            <th class="text-center">В том числе НДС</th>#}
                         </tr>
                     </thead>
                     <tbody id="reportsTable">
@@ -67,9 +77,14 @@
                             <tr>
                                 <td style="width: 10%;">{{ r.date|date:"d.m.Y" }}</td>
                                 <td>{{ r.service }}</td>
+                                <td style="width: 10%;">{{ r.cash_amount }}</td>
+                                <td style="width: 10%;">{{ r.cash_sum }} руб.</td>
+{#                                <td style="width: 10%;">{{ r.cash_nds }} руб.</td>#}
+                                <td style="width: 10%;">{{ r.card_amount }}</td>
+                                <td style="width: 10%;">{{ r.card_sum }} руб.</td>
                                 <td style="width: 10%;">{{ r.amount }}</td>
                                 <td style="width: 10%;">{{ r.sum }} руб.</td>
-                                <td style="width: 10%;">{{ r.nds }} руб.</td>
+{#                                <td style="width: 10%;">{{ r.card_nds }} руб.</td>#}
                                 <td style="width: 16.6%;">{{ r.date_create|date:"d.m.Y" }}</td>
                             </tr>
                         {% endfor %}
@@ -78,9 +93,13 @@
                         <tr>
                             <td></td>
                             <td class="text-end"><strong>Итого</strong></td>
+                            <td id="total_cash_count"></td>
+                            <td id="total_cash_sum"></td>
+{#                            <td id="total_cash_nds"></td>#}
+                            <td id="total_card_count"></td>
+                            <td id="total_card_sum"></td>
                             <td id="total_count"></td>
                             <td id="total_sum"></td>
-                            <td id="total_nds"></td>
                             <td></td>
                         </tr>
                     </tfoot>
@@ -95,23 +114,48 @@
         function Sum() {
             const
                 total_count = document.getElementById('total_count'),
-                total_sum = document.getElementById('total_sum');
-                total_nds = document.getElementById('total_nds');
-            let trs = document.getElementsByTagName('tbody')[1].getElementsByTagName('tr');
-            tc=0;
-            ts=0;
+                total_sum = document.getElementById('total_sum'),
+                total_cash_count = document.getElementById('total_cash_count'),
+                total_cash_sum = document.getElementById('total_cash_sum'),
+                total_card_count = document.getElementById('total_card_count'),
+                total_card_sum = document.getElementById('total_card_sum');
+                {#total_nds = document.getElementById('total_nds');#}
+            let
+                trs = document.getElementsByTagName('tbody')[1].getElementsByTagName('tr'),
+                count_cash=0,
+                sum_cash=0,
+                count_card=0,
+                sum_card=0,
+                count_total=0,
+                sum_total=0;
 
             for (let td=0; td < trs.length; td++){
                 if (trs[td].style.display == '') {
-                    tc = tc + Number(trs[td].getElementsByTagName('td')[2].innerText);
-                    total_count.innerText = tc;
+                    count_cash = count_cash + Number(trs[td].getElementsByTagName('td')[2].innerText);
+                    total_cash_count.innerText = count_cash;
                     // console.log(tc);
 
-                    ts = ts + parseFloat(trs[td].getElementsByTagName('td')[3].innerText.split(' ')[0].replace(',', '.'))
-                    total_sum.innerText = ts.toFixed(2).replace('.', ',') + ' руб.';
+                    sum_cash = sum_cash + parseFloat(trs[td].getElementsByTagName('td')[3].innerText.split(' ')[0].replace(',', '.'))
+                    total_cash_sum.innerText = sum_cash.toFixed(2).replace('.', ',') + ' руб.';
+                    // console.log(ts)
+
+                    count_card = count_card + Number(trs[td].getElementsByTagName('td')[4].innerText);
+                    total_card_count.innerText = count_card;
+                    // console.log(tc);
+
+                    sum_card = sum_card + parseFloat(trs[td].getElementsByTagName('td')[5].innerText.split(' ')[0].replace(',', '.'))
+                    total_card_sum.innerText = sum_card.toFixed(2).replace('.', ',') + ' руб.';
+                    // console.log(ts)
+
+                    count_total = count_total + Number(trs[td].getElementsByTagName('td')[6].innerText);
+                    total_count.innerText = count_total;
+                    // console.log(tc);
+
+                    sum_total = sum_total + parseFloat(trs[td].getElementsByTagName('td')[7].innerText.split(' ')[0].replace(',', '.'))
+                    total_sum.innerText = sum_total.toFixed(2).replace('.', ',') + ' руб.';
                     // console.log(ts)
                 }
-            total_nds.innerText = (parseFloat(total_sum.innerText.split(' ')[0].replace(',', '.'))/6).toFixed(2) + ' руб.';
+            {#total_nds.innerText = (parseFloat(total_sum.innerText.split(' ')[0].replace(',', '.'))/6).toFixed(2) + ' руб.';#}
 
 
             }
