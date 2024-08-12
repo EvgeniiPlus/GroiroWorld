@@ -59,7 +59,7 @@
                             <th class="text-center" colspan="2">Оплата наличными</th>
                             <th class="text-center" colspan="2">Оплата по карте</th>
                             <th class="text-center" colspan="2">Итого</th>
-                            <th class="text-center" rowspan="2">Дата создания отчета</th>
+{#                            <th class="text-center" rowspan="2">Дата создания отчета</th>#}
                         </tr>
                         <tr>
                             <th class="text-center">Количество</th>
@@ -85,7 +85,7 @@
                                 <td style="width: 10%;">{{ r.amount }}</td>
                                 <td style="width: 10%;">{{ r.sum }} руб.</td>
 {#                                <td style="width: 10%;">{{ r.card_nds }} руб.</td>#}
-                                <td style="width: 16.6%;">{{ r.date_create|date:"d.m.Y" }}</td>
+{#                                <td style="width: 16.6%;">{{ r.date_create|date:"d.m.Y" }}</td>#}
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -100,7 +100,7 @@
                             <td id="total_card_sum"></td>
                             <td id="total_count"></td>
                             <td id="total_sum"></td>
-                            <td></td>
+{#                            <td></td>#}
                         </tr>
                     </tfoot>
                 </table>

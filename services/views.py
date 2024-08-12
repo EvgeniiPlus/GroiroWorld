@@ -81,6 +81,7 @@ def home(request):
         'user_menu': get_user_menu(groups),
         'title': 'ГрОИРО. Услуги',
         'userAvatar': Profile.objects.get(user=request.user).avatar,
+        'groups': groups,
     }
 
     if 'Операторы' in groups:
@@ -589,6 +590,7 @@ def myServices(request):
             structure=Structures.objects.get(employee=user)),
         # 'structure': Structures.objects.filter(employee=Profile.objects.get(user=request.user)).first,
         'userAvatar': Profile.objects.get(user=request.user).avatar,
+
     }
 
     if request.method == 'POST':
