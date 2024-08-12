@@ -29,6 +29,7 @@ urlpatterns = [
     path('library/', include('library.urls')),
     path('webhook/', include('webhook.urls')),
     path('', include('AllGroiro.urls')),
+    path('api/v1/', include('api.urls')),
 
 ]
 

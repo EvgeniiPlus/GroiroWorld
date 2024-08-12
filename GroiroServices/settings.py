@@ -49,6 +49,8 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'library.apps.LibraryConfig',
     'webhook',
+    'rest_framework',
+    'api.apps.ApiConfig'
 ]
 
 MIDDLEWARE = [
