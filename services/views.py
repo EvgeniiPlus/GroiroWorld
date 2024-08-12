@@ -230,7 +230,7 @@ def dailyReport(request):
     groups = request.user.groups.values_list('name', flat=True)
     context = {
         'menu': get_menu(groups),
-        'userMenu': get_menu(groups),
+        'user_menu': get_user_menu(groups),
         'title': 'Ежедневный отчет',
         'services': Services.objects.filter(
             structure=Structures.objects.get(employee=user)),
@@ -313,7 +313,7 @@ def chooseStructure(request):
     groups = request.user.groups.values_list('name', flat=True)
     context = {
         'menu': get_menu(groups),
-        'userMenu': get_menu(groups),
+        'user_menu': get_user_menu(groups),
         'title': 'Выбор структуры',
         'structures': Structures.objects.all(),
         'userAvatar': Profile.objects.get(user=request.user).avatar,
@@ -328,7 +328,7 @@ def listReports(request, pk):
     groups = request.user.groups.values_list('name', flat=True)
     context = {
         'menu': get_menu(groups),
-        'userMenu': get_menu(groups),
+        'user_menu': get_user_menu(groups),
         'title': 'Отчеты',
         'structure': Structures.objects.filter(pk=pk).first,
         'services': Services.objects.filter(structure=Structures.objects.get(pk=pk)),
