@@ -162,8 +162,7 @@ def home(request):
         operator_name = str(user.first_name)
         operator_surname = str(user.last_name)
         IOF_operator = operator_name.split(' ')[0][0] + '.' + operator_name.split(' ')[1][0] + '.' + operator_surname
-        FIO_operator = operator_surname + ' ' + operator_name.split(' ')[0][0] + '.' + operator_name.split(' ')[1][
-            0] + '.'
+        FIO_operator = operator_surname + ' ' + operator_name.split(' ')[0][0] + '.' + operator_name.split(' ')[1][0] + '.'
 
         date = request.POST.get('date').split('-')[2] + '.' + request.POST.get('date').split('-')[1] + '.' + \
                request.POST.get('date').split('-')[0]
@@ -172,22 +171,36 @@ def home(request):
                                                   date=request.POST.get('date'))
         int_units = ((u'рубль', u'рубля', u'рублей'), 'm')
         exp_units = ((u'копейка', u'копейки', u'копеек'), 'f')
-        sum = 0
-        nds = 0
-        servs = ''
+        sum_cash = 0
+        nds_cash = 0
+        sum_card = 0
+        nds_card = 0
+        servs_cash = ''
+        servs_card = ''
         for i, r in enumerate(reports_to_print):
-            sum += r.sum
-            nds += r.nds
-            servs += f'\t{i + 1}. {r.service.name} {(str(r.sum).split(".")[0])} руб. {str("{:.2f}".format(r.sum)).split(".")[1]} коп. ({decimal2text(r.sum, int_units=int_units, exp_units=exp_units)}), ' \
-                     f'в т.ч. НДС - {str(r.nds).split(".")[0]} руб. {str("{:.2f}".format(r.nds)).split(".")[1]} коп. ({decimal2text(r.nds, int_units=int_units, exp_units=exp_units)}).\n'
+            sum_cash += r.cash_sum
+            nds_cash += r.cash_nds
+            servs_cash += f'\t{i + 1}. {r.service.name} {(str(r.cash_sum).split(".")[0])} руб. {str("{:.2f}".format(r.cash_sum)).split(".")[1]} коп. ({decimal2text(r.cash_sum, int_units=int_units, exp_units=exp_units)}), ' \
+                     f'в т.ч. НДС - {str(r.cash_nds).split(".")[0]} руб. {str("{:.2f}".format(r.cash_nds)).split(".")[1]} коп. ({decimal2text(r.cash_nds, int_units=int_units, exp_units=exp_units)}).\n'
+
+
+            sum_card += r.card_sum
+            nds_card  += r.card_nds
+            servs_card  += f'\t{i + 1}. {r.service.name} {(str(r.card_sum).split(".")[0])} руб. {str("{:.2f}".format(r.card_sum)).split(".")[1]} коп. ({decimal2text(r.card_sum, int_units=int_units, exp_units=exp_units)}), ' \
+                          f'в т.ч. НДС - {str(r.card_nds).split(".")[0]} руб. {str("{:.2f}".format(r.card_nds)).split(".")[1]} коп. ({decimal2text(r.card_nds, int_units=int_units, exp_units=exp_units)}).\n'
+
+
 
         data = {
-            'res': f'Всего: {str("{:.2f}".format(sum)).split(".")[0]} руб. {str("{:.2f}".format(sum)).split(".")[1]} коп. ({decimal2text(sum, int_units=int_units, exp_units=exp_units)}), '
-                   f'в т.ч. НДС – {str("{:.2f}".format(nds)).split(".")[0]} руб. {str("{:.2f}".format(nds)).split(".")[1]} коп.  ({decimal2text(nds, int_units=int_units, exp_units=exp_units)}).',
+            'res_cash': f'Всего: {str("{:.2f}".format(sum_cash)).split(".")[0]} руб. {str("{:.2f}".format(sum_cash)).split(".")[1]} коп. ({decimal2text(sum_cash, int_units=int_units, exp_units=exp_units)}), '
+                   f'в т.ч. НДС – {str("{:.2f}".format(nds_cash)).split(".")[0]} руб. {str("{:.2f}".format(nds_cash)).split(".")[1]} коп.  ({decimal2text(nds_cash, int_units=int_units, exp_units=exp_units)}).',
+            'res_card': f'Всего: {str("{:.2f}".format(sum_card)).split(".")[0]} руб. {str("{:.2f}".format(sum_card)).split(".")[1]} коп. ({decimal2text(sum_card, int_units=int_units, exp_units=exp_units)}), '
+                        f'в т.ч. НДС – {str("{:.2f}".format(nds_card)).split(".")[0]} руб. {str("{:.2f}".format(nds_card)).split(".")[1]} коп.  ({decimal2text(nds_card, int_units=int_units, exp_units=exp_units)}).',
             'date': date,
             'IOF_operator': IOF_operator,
             'FIO_operator': FIO_operator,
-            'servs': servs,
+            'servs_cash': servs_cash,
+            'servs_card': servs_card,
         }
 
         doc = DocxTemplate("services/static/template.docx")

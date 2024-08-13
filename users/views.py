@@ -1,3 +1,4 @@
+from django.contrib.auth import logout
 from django.shortcuts import render, redirect
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
@@ -66,3 +67,8 @@ def profile(request):
         return redirect('profile')
 
     return render(request, 'profile.html', context)
+
+
+def user_logout(request):
+    logout(request)
+    return redirect('home')
