@@ -10,7 +10,20 @@ class BookSerializer(serializers.ModelSerializer):
         model = Book
         fields = '__all__'
 
+
 class ArticleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
+        fields = '__all__'
+
+
+class ReaderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reader
+        fields = '__all__'
+
+
+class BookIssueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BookIssue
         fields = '__all__'

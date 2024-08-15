@@ -57,9 +57,43 @@ class Article(models.Model):
         return self.title_article
 
 
+class Reader(models.Model):
+    name = models.CharField(max_length=255, verbose_name="ФИО")
+    phone = models.CharField(max_length=30, verbose_name="Номер телефона")
+    birth_date = models.DateField(verbose_name="Дата рождения")
+    education = models.CharField(max_length=100, verbose_name="Образование")
+    work_place = models.CharField(max_length=200, verbose_name="Место работы")
+    work_post = models.CharField(max_length=200, verbose_name="Должность")
+    work_phone = models.CharField(blank=True, max_length=30, verbose_name="Служебный номер")
+    address = models.CharField(max_length=200, verbose_name="Домашний адрес")
+    passport_series = models.CharField(max_length=5, verbose_name="Серия паспорта")
+    passport_number = models.IntegerField(verbose_name="Номер паспорта")
+    passport_issue_place = models.CharField(max_length=100, verbose_name="Место выдачи паспорта")
+    passport_issue_date = models.DateField(verbose_name="Дата выдачи паспорта")
+    personal_data_agreement = models.BooleanField(default=False, verbose_name="Согласие на обработку персональных данных")
+    library_rules_agreement = models.BooleanField(default=False, verbose_name="Согласие с правилами библиотеки")
+    telegram_id = models.IntegerField(verbose_name="Телеграмм ID")
+    date_create = models.DateTimeField(null=True, auto_now_add=True, verbose_name="Дата регистрации")
+
+    class Meta:
+        verbose_name = 'Читатель'
+        verbose_name_plural = 'Читатели'
+
+    def __str__(self):
+        return self.name
+
+
 class BookIssue(models.Model):
     book = models.ForeignKey(Book, on_delete=models.CASCADE, verbose_name="Книга для выдачи")
     reader = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Читатель")
     issue_date = models.DateField(verbose_name="Дата выдачи")
     is_return = models.BooleanField(default=False, verbose_name="Книга возвращена")
+    note = models.TextField(blank=True, verbose_name="Замечания")
     date_create = models.DateTimeField(null=True, auto_now_add=True, verbose_name="Создано")
+
+    class Meta:
+        verbose_name = 'Выдача книги'
+        verbose_name_plural = 'Выдачи книг'
+
+    def __str__(self):
+        return f'{self.name} - {self.reader} - {self.issue_date}'
