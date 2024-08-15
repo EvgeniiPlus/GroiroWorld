@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.contrib.auth.models import User
 
 from django.db import models
 
@@ -8,7 +8,8 @@ def book_directory_path(instance, filename):
 
 
 class Book(models.Model):
-    img = models.ImageField(upload_to=book_directory_path, null=True, default='library/nobook.jpg', verbose_name="Обложка")
+    img = models.ImageField(upload_to=book_directory_path, null=True, default='library/nobook.jpg',
+                            verbose_name="Обложка")
     index = models.CharField(blank=True, max_length=50, verbose_name="Индекс")
     author_mark = models.CharField(blank=True, max_length=50, verbose_name="Авторский знак")
     author = models.CharField(blank=True, max_length=200, verbose_name="Автор")
@@ -44,7 +45,8 @@ class Article(models.Model):
     pub_date = models.CharField(blank=True, max_length=50, verbose_name="Год издания")
     pub_number = models.CharField(blank=True, max_length=50, verbose_name="Номер журнала")
     num_pages = models.CharField(blank=True, max_length=50, verbose_name="Количество страниц")
-    file = models.FileField(blank=True, null=True, upload_to=article_directory_path, verbose_name="Электронная версия статьи")
+    file = models.FileField(blank=True, null=True, upload_to=article_directory_path,
+                            verbose_name="Электронная версия статьи")
     date_create = models.DateTimeField(null=True, auto_now_add=True, verbose_name="Создано")
 
     class Meta:
@@ -53,3 +55,11 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title_article
+
+
+class BookIssue(models.Model):
+    book = models.ForeignKey(Book, on_delete=models.CASCADE, verbose_name="Книга для выдачи")
+    reader = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Читатель")
+    issue_date = models.DateField(verbose_name="Дата выдачи")
+    is_return = models.BooleanField(default=False, verbose_name="Книга возвращена")
+    date_create = models.DateTimeField(null=True, auto_now_add=True, verbose_name="Создано")
