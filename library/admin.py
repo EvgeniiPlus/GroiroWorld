@@ -27,8 +27,9 @@ class ReaderAdmin(admin.ModelAdmin):
 
 
 class BookIssueAdmin(admin.ModelAdmin):
-    list_display = ('book', 'reader', 'issue_date', 'is_return')
+    list_display = ('book', 'reader', 'issue_date', 'is_return', 'date_update')
     list_display_links = ('book', 'reader')
+    list_editable = ('is_return',)
     search_fields = ('book', 'reader', 'issue_date')
     list_filter = ('is_return',)
 
