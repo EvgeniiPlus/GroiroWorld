@@ -4,7 +4,7 @@ from .models import *
 
 class BookAdmin(admin.ModelAdmin):
     list_display = (
-    'id', 'author', 'title', 'pub_place', 'publishing', 'pub_date', 'num_pages', 'invent_number', 'date_create')
+        'id', 'author', 'title', 'pub_place', 'publishing', 'pub_date', 'num_pages', 'invent_number', 'date_create')
     list_display_links = ('id', 'author', 'title',)
     search_fields = ('author', 'title')
     list_filter = ('author', 'publishing', 'pub_date')
@@ -19,5 +19,22 @@ class ArticleAdmin(admin.ModelAdmin):
     list_filter = ('title_magazine', 'pub_date', 'pub_number')
 
 
+class ReaderAdmin(admin.ModelAdmin):
+    list_display = ('name', 'work_place', 'telegram_id')
+    list_display_links = ('name',)
+    search_fields = ('name', 'telegram_id')
+    list_filter = ('work_place', 'education')
+
+
+class BookIssueAdmin(admin.ModelAdmin):
+    list_display = ('book', 'reader', 'issue_date', 'is_return', 'date_update')
+    list_display_links = ('book', 'reader')
+    list_editable = ('is_return',)
+    search_fields = ('book', 'reader', 'issue_date')
+    list_filter = ('is_return',)
+
+
 admin.site.register(Book, BookAdmin)
 admin.site.register(Article, ArticleAdmin)
+admin.site.register(Reader, ReaderAdmin)
+admin.site.register(BookIssue, BookIssueAdmin)

@@ -33,7 +33,7 @@ from num2t4ru import decimal2text
 # Create your views here.
 
 main_menu = [{'title': 'Главная', 'url_name': 'home', 'icon': 'fas fa-home fa-sm fa-fw me-2 text-gray-400',
-              'role': ['Администраторы', 'Операторы', 'Экономисты']},
+              'role': ['Администраторы', 'Операторы', 'Экономисты',]},
              {'title': 'Создать отчет', 'url_name': 'dailyReport',
               'icon': 'fas fa-plus-square fa-sm fa-fw me-2 text-gray-400', 'role': ['Операторы']},
              {'title': 'Мои отчеты', 'url_name': 'myReports', 'icon': 'fas fa-file fa-sm fa-fw me-2 text-gray-400',
@@ -45,11 +45,11 @@ main_menu = [{'title': 'Главная', 'url_name': 'home', 'icon': 'fas fa-hom
              ]
 
 user_menu = [{'title': 'Профиль', 'url_name': 'profile', 'icon': 'fas fa-user fa-sm fa-fw me-2 text-gray-400',
-              'role': ['Администраторы', 'Операторы', 'Экономисты']},
+              'role': ['Администраторы', 'Операторы', 'Экономисты', 'Библиотекари']},
              {'title': 'Админ-панель', 'url_name': 'admin:index', 'icon': 'fas fa-cogs fa-sm fa-fw me-2 text-gray-400',
               'role': ['Администраторы']},
              {'title': 'Выйти', 'url_name': 'logout', 'icon': 'fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400',
-              'role': ['Администраторы', 'Операторы', 'Экономисты']}
+              'role': ['Администраторы', 'Операторы', 'Экономисты', 'Библиотекари']}
              ]
 
 
@@ -162,7 +162,8 @@ def home(request):
         operator_name = str(user.first_name)
         operator_surname = str(user.last_name)
         IOF_operator = operator_name.split(' ')[0][0] + '.' + operator_name.split(' ')[1][0] + '.' + operator_surname
-        FIO_operator = operator_surname + ' ' + operator_name.split(' ')[0][0] + '.' + operator_name.split(' ')[1][0] + '.'
+        FIO_operator = operator_surname + ' ' + operator_name.split(' ')[0][0] + '.' + operator_name.split(' ')[1][
+            0] + '.'
 
         date = request.POST.get('date').split('-')[2] + '.' + request.POST.get('date').split('-')[1] + '.' + \
                request.POST.get('date').split('-')[0]
@@ -178,18 +179,16 @@ def home(request):
         servs_cash = ''
         servs_card = ''
         for i, r in enumerate(reports_to_print):
-            sum_cash += r.cash_sum
-            nds_cash += r.cash_nds
-            servs_cash += f'\t{i + 1}. {r.service.name} {(str(r.cash_sum).split(".")[0])} руб. {str("{:.2f}".format(r.cash_sum)).split(".")[1]} коп. ({decimal2text(r.cash_sum, int_units=int_units, exp_units=exp_units)}), ' \
-                     f'в т.ч. НДС - {str(r.cash_nds).split(".")[0]} руб. {str("{:.2f}".format(r.cash_nds)).split(".")[1]} коп. ({decimal2text(r.cash_nds, int_units=int_units, exp_units=exp_units)}).\n'
-
-
-            sum_card += r.card_sum
-            nds_card  += r.card_nds
-            servs_card  += f'\t{i + 1}. {r.service.name} {(str(r.card_sum).split(".")[0])} руб. {str("{:.2f}".format(r.card_sum)).split(".")[1]} коп. ({decimal2text(r.card_sum, int_units=int_units, exp_units=exp_units)}), ' \
-                          f'в т.ч. НДС - {str(r.card_nds).split(".")[0]} руб. {str("{:.2f}".format(r.card_nds)).split(".")[1]} коп. ({decimal2text(r.card_nds, int_units=int_units, exp_units=exp_units)}).\n'
-
-
+            if r.cash_sum > 0:
+                sum_cash += r.cash_sum
+                nds_cash += r.cash_nds
+                servs_cash += f'\t{i + 1}. {r.service.name} {(str(r.cash_sum).split(".")[0])} руб. {str("{:.2f}".format(r.cash_sum)).split(".")[1]} коп. ({decimal2text(r.cash_sum, int_units=int_units, exp_units=exp_units)}), ' \
+                              f'в т.ч. НДС - {str(r.cash_nds).split(".")[0]} руб. {str("{:.2f}".format(r.cash_nds)).split(".")[1]} коп. ({decimal2text(r.cash_nds, int_units=int_units, exp_units=exp_units)}).\n'
+            if r.card_sum >0:
+                sum_card += r.card_sum
+                nds_card += r.card_nds
+                servs_card += f'\t{i + 1}. {r.service.name} {(str(r.card_sum).split(".")[0])} руб. {str("{:.2f}".format(r.card_sum)).split(".")[1]} коп. ({decimal2text(r.card_sum, int_units=int_units, exp_units=exp_units)}), ' \
+                              f'в т.ч. НДС - {str(r.card_nds).split(".")[0]} руб. {str("{:.2f}".format(r.card_nds)).split(".")[1]} коп. ({decimal2text(r.card_nds, int_units=int_units, exp_units=exp_units)}).\n'
 
         data = {
             'res_cash': f'Всего: {str("{:.2f}".format(sum_cash)).split(".")[0]} руб. {str("{:.2f}".format(sum_cash)).split(".")[1]} коп. ({decimal2text(sum_cash, int_units=int_units, exp_units=exp_units)}), '
@@ -202,6 +201,21 @@ def home(request):
             'servs_cash': servs_cash,
             'servs_card': servs_card,
         }
+        # if sum_cash > 0:
+        #     data['res_cash'] = (f'Всего: {str("{:.2f}".format(sum_cash)).split(".")[0]} руб. '
+        #                         f'{str("{:.2f}".format(sum_cash)).split(".")[1]} коп. '
+        #                         f'({decimal2text(sum_cash, int_units=int_units, exp_units=exp_units)}), '
+        #                         f'в т.ч. НДС – {str("{:.2f}".format(nds_cash)).split(".")[0]} руб. '
+        #                         f'{str("{:.2f}".format(nds_cash)).split(".")[1]} коп.  '
+        #                         f'({decimal2text(nds_cash, int_units=int_units, exp_units=exp_units)}).')
+        #
+        # if sum_card > 0:
+        #     data['res_card'] = (f'Всего: {str("{:.2f}".format(sum_card)).split(".")[0]} руб. '
+        #                         f'{str("{:.2f}".format(sum_card)).split(".")[1]} коп. '
+        #                         f'({decimal2text(sum_card, int_units=int_units, exp_units=exp_units)}), '
+        #                         f'в т.ч. НДС – {str("{:.2f}".format(nds_card)).split(".")[0]} руб. '
+        #                         f'{str("{:.2f}".format(nds_card)).split(".")[1]} коп.  '
+        #                         f'({decimal2text(nds_card, int_units=int_units, exp_units=exp_units)}).')
 
         doc = DocxTemplate("services/static/template.docx")
 
@@ -220,6 +234,7 @@ def home(request):
 
         return response
         # return redirect('home')
+
 
     return render(request, 'index.html', context)
 
@@ -303,7 +318,7 @@ def dailyReport(request):
 
                         card_amount=service_count_card_list[i],
                         card_sum=card_sum,
-                        card_nds=round(cash_sum / 6, 2),
+                        card_nds=round(card_sum / 6, 2),
 
                         amount=int(service_count_cash_list[i]) + int(service_count_card_list[i]),
                         sum=cash_sum + card_sum,
