@@ -33,7 +33,7 @@ from num2t4ru import decimal2text
 # Create your views here.
 
 main_menu = [{'title': 'Главная', 'url_name': 'home', 'icon': 'fas fa-home fa-sm fa-fw me-2 text-gray-400',
-              'role': ['Администраторы', 'Операторы', 'Экономисты']},
+              'role': ['Администраторы', 'Операторы', 'Экономисты',]},
              {'title': 'Создать отчет', 'url_name': 'dailyReport',
               'icon': 'fas fa-plus-square fa-sm fa-fw me-2 text-gray-400', 'role': ['Операторы']},
              {'title': 'Мои отчеты', 'url_name': 'myReports', 'icon': 'fas fa-file fa-sm fa-fw me-2 text-gray-400',
@@ -45,11 +45,11 @@ main_menu = [{'title': 'Главная', 'url_name': 'home', 'icon': 'fas fa-hom
              ]
 
 user_menu = [{'title': 'Профиль', 'url_name': 'profile', 'icon': 'fas fa-user fa-sm fa-fw me-2 text-gray-400',
-              'role': ['Администраторы', 'Операторы', 'Экономисты']},
+              'role': ['Администраторы', 'Операторы', 'Экономисты', 'Библиотекари']},
              {'title': 'Админ-панель', 'url_name': 'admin:index', 'icon': 'fas fa-cogs fa-sm fa-fw me-2 text-gray-400',
               'role': ['Администраторы']},
              {'title': 'Выйти', 'url_name': 'logout', 'icon': 'fas fa-sign-out-alt fa-sm fa-fw me-2 text-gray-400',
-              'role': ['Администраторы', 'Операторы', 'Экономисты']}
+              'role': ['Администраторы', 'Операторы', 'Экономисты', 'Библиотекари']}
              ]
 
 
