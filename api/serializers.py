@@ -35,3 +35,14 @@ class BookIssueSerializer(serializers.ModelSerializer):
         representation['book_title'] = representation['book_title'].replace('\r\n', '')
         return representation
 
+
+class UsersSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+
+
+class LibrariansSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Profile
+        fields = '__all__'
