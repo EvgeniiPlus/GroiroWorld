@@ -11,6 +11,7 @@ class Profile(models.Model):
     avatar = models.ImageField(upload_to=user_directory_path, default='nophoto.jpg', null=True, verbose_name="Аватар")
     birthday = models.DateField(verbose_name="День рождения", null=True, blank=True)
     phone_number = models.CharField(max_length=13, verbose_name="Номер телефона (моб.)", null=True, blank=True)
+    telegram_id = models.IntegerField(verbose_name="Telegram ID", null=True, blank=True)
 
     class Meta:
         verbose_name = 'Профиль пользователя'

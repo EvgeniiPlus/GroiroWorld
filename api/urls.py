@@ -11,6 +11,7 @@ router.register(r'books', views.BookViewSet)
 router.register(r'articles', views.ArticleViewSet)
 router.register(r'readers', views.ReaderViewSet)
 router.register(r'issues', views.BookIssueViewSet)
+router.register(r'users', views.UsersViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
